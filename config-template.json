@@ -1,5 +1,5 @@
 {
-  "webhookUrl": "http://_REPLACE_THIS_WITH_NGROK_URL_.ngrok.io",
-  "token": "REPLACE_THIS_WITH_YOUR_BOT_API_KEY",
+  "webhookUrl": "https://metcirt-on-call-bot.azurewebsites.net",
+  "token": "NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c",
   "port": 7001
 }
