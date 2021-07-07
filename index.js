@@ -1,4 +1,4 @@
-//Webex Bot Starter - featuring the webex-node-bot-framework - https://www.npmjs.com/package/webex-node-bot-framework
+// Webex Bot Starter - featuring the webex-node-bot-framework - https://www.npmjs.com/package/webex-node-bot-framework
 
 var framework = require('webex-node-bot-framework');
 var webhook = require('webex-node-bot-framework/webhook');
@@ -10,8 +10,8 @@ app.use(express.static('images'));
 const config = require("./config.json");
 
 // init framework
-var framework = new framework(config);
-framework.start();
+framework = new framework(config);
+framework.start().then();
 console.log("Starting framework, please wait...");
 
 framework.on("initialized", function () {
@@ -49,7 +49,7 @@ framework.on('spawn', (bot, id, actorId) => {
 });
 
 
-//Process incoming messages
+// Process incoming messages
 
 let responded = false;
 /* On mention with command
@@ -64,12 +64,12 @@ framework.hears(/help|what can i (do|say)|what (can|do) you do/i, function (bot,
 });
 
 /* On mention with command
-ex User enters @botname framework, the bot will write back in markdown
+ex User enters @botname who, the bot will write back in markdown
 */
-framework.hears('framework', function (bot) {
-  console.log("framework command received");
+framework.hears('who', function (bot) {
+  console.log("who command received");
   responded = true;
-  bot.say("markdown", "The primary purpose for the [webex-node-bot-framework](https://github.com/jpjpjp/webex-node-bot-framework) was to create a framework based on the [webex-jssdk](https://webex.github.io/webex-js-sdk) which continues to be supported as new features and functionality are added to Webex. This version of the project was designed with two themes in mind: \n\n\n * Mimimize Webex API Calls. The original flint could be quite slow as it attempted to provide bot developers rich details about the space, membership, message and message author. This version eliminates some of that data in the interests of efficiency, (but provides convenience methods to enable bot developers to get this information if it is required)\n * Leverage native Webex data types. The original flint would copy details from the webex objects such as message and person into various flint objects. This version simply attaches the native Webex objects. This increases the framework's efficiency and makes it future proof as new attributes are added to the various webex DTOs ");
+  bot.say("markdown", "The METCIRT on-call person is Kyle Stephens!!");
 });
 
 /* On mention with command, using other trigger data, can use lite markdown formatting
@@ -216,7 +216,7 @@ framework.hears(/.*/, function (bot, trigger) {
 
 function sendHelp(bot) {
   bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
-    '1. **framework**   (learn more about the Webex Bot Framework) \n' +
+    '1. **who**   (get the name of the current METCIRT on-call person) \n' +
     '2. **info**  (get your personal details) \n' +
     '3. **space**  (get details about this space) \n' +
     '4. **card me** (a cool card!) \n' +
@@ -240,7 +240,7 @@ var server = app.listen(config.port, function () {
 
 // gracefully shutdown (ctrl-c)
 process.on('SIGINT', function () {
-  framework.debug('stoppping...');
+  framework.debug('stopping...');
   server.close();
   framework.stop().then(function () {
     process.exit();
