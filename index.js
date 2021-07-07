@@ -19,40 +19,36 @@ framework.on("initialized", function () {
 });
 
 // A spawn event is generated when the framework finds a space with your bot in it
-// If actorId is set, it means that user has just added your bot to a new space
+// If actorId is set, it means that a user has just added your bot to a new space
 // If not, the framework has discovered your bot in an existing space
 framework.on('spawn', (bot, id, actorId) => {
-  if (!actorId) {
-    // don't say anything here or your bot's spaces will get
-    // spammed every time your server is restarted
-    console.log(`While starting up, the framework found our bot in a space called: ${bot.room.title}`);
-  } else {
+  if (actorId) {
     // When actorId is present it means someone added your bot got added to a new space
     // Let's find out more about them..
     let msg = 'You can say `help` to get the list of words I am able to respond to.';
-    bot.webex.people.get(actorId).then((user) => {
-      msg = `Hello there ${user.displayName}. ${msg}`; 
+    bot.webex.people.get(actorId).then(() => {
+      msg = `Hello there. ${msg}`;
     }).catch((e) => {
       console.error(`Failed to lookup user details in framework.on("spawn"): ${e.message}`);
-      msg = `Hello there. ${msg}`;  
+      msg = `Hello there. ${msg}`;
     }).finally(() => {
       // Say hello, and tell users what you do!
-      if (bot.isDirect) {
-        bot.say('markdown', msg);
-      } else {
+      if (!bot.isDirect) {
         let botName = bot.person.displayName;
-        msg += `\n\nDon't forget, in order for me to see your messages in this group space, be sure to *@mention* ${botName}.`;
-        bot.say('markdown', msg);
+        msg += `\n\nIn order for me to see your messages in this group space, be sure to *@mention* ${botName}.`;
       }
+      bot.say('markdown', msg);
     });
+  } else {
+    // don't say anything here or your bot's spaces will get spammed every time your server is restarted
+    console.log(`While starting up, the framework found our bot in a space called: ${bot.room.title}`);
   }
 });
 
-
 // Process incoming messages
-
 let responded = false;
 let rotation = ['Stephens, Kyle', 'Langlois, AJ', 'Dodd, Kyle', 'Vobbilichetty, Vinay', 'Smith, Cedric'];
+
 /* On mention with command
 ex User enters @botname help, the bot will write back in markdown
 */
@@ -60,13 +56,10 @@ framework.hears('help', function (bot) {
   console.log(`someone needs help!`);
   responded = true;
   bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
-      '1. **who**  (get the name of the current METCIRT on-call person) \n' +
-      '2. **info**  (get your personal details) \n' +
-      '3. **space**  (get details about this space) \n' +
-      '4. **card me** (a cool card!) \n' +
-      '5. **say hi to everyone** (everyone gets a greeting using a call to the Webex SDK) \n' +
-      '6. **reply** (have bot reply to your message) \n' +
-      '7. **help** (what you are reading now)')
+      '**who**  (get the name of the current METCIRT on-call person) \n' +
+      '**rotation**  (get the rotation details) \n' +
+      '**dev** (get developer details) \n' +
+      '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
 });
 
@@ -82,129 +75,23 @@ framework.hears('who', function (bot) {
 /* On mention with command, using other trigger data, can use lite Markdown formatting
 ex User enters @botname 'info' phrase, the bot will provide personal details
 */
-framework.hears('info', function (bot, trigger) {
-  console.log("info command received");
+framework.hears('dev', function (bot) {
+  console.log("dev command received");
   responded = true;
-  //the "trigger" parameter gives you access to data about the user who entered the command
-  let personAvatar = trigger.person.avatar;
-  let personEmail = trigger.person.emails[0];
-  let personDisplayName = trigger.person.displayName;
-  let outputString = `Here is your personal information: \n\n\n **Name:** ${personDisplayName}  \n\n\n **Email:** ${personEmail} \n\n\n **Avatar URL:** ${personAvatar}`;
-  bot.say("markdown", outputString);
+  bot.say("markdown", 'This bot is maintained by Vinay Vobbilichetty from METCIRT. Reach out to him for feedback or feature requests');
 });
 
-/* On mention with bot data 
-ex User enters @botname 'space' phrase, the bot will provide details about that particular space
+/* On mention with command, using other trigger data, can use lite Markdown formatting
+ex User enters @botname 'info' phrase, the bot will provide personal details
 */
-framework.hears('space', function (bot) {
-  console.log("space. the final frontier");
+framework.hears('rotation', function (bot) {
+  console.log("rotation command received");
   responded = true;
-  let roomTitle = bot.room.title;
-  let spaceID = bot.room.id;
-  let roomType = bot.room.type;
-
-  let outputString = `The title of this space: ${roomTitle} \n\n The roomID of this space: ${spaceID} \n\n The type of this space: ${roomType}`;
-
-  console.log(outputString);
-  bot.say("markdown", outputString)
-    .catch((e) => console.error(`bot.say failed: ${e.message}`));
-
-});
-
-/* 
-   Say hi to every member in the space
-   This demonstrates how developers can access the webex
-   sdk to call any Webex API.  API Doc: https://webex.github.io/webex-js-sdk/api/
-*/
-framework.hears("say hi to everyone", function (bot) {
-  console.log("say hi to everyone. Its a party");
-  responded = true;
-  // Use the webex SDK to get the list of users in this space
-  bot.webex.memberships.list({roomId: bot.room.id})
-    .then((memberships) => {
-      for (const member of memberships.items) {
-        if (member.personId === bot.person.id) {
-          // Skip myself!
-          continue;
-        }
-        let displayName = (member.personDisplayName) ? member.personDisplayName : member.personEmail;
-        bot.say(`Hello ${displayName}`);
-      }
-    })
-    .catch((e) => {
-      console.error(`Call to sdk.memberships.get() failed: ${e.messages}`);
-      bot.say('Hello everybody!');
-    });
-});
-
-// Buttons & Cards data
-let cardJSON =
-{
-  $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
-  type: 'AdaptiveCard',
-  version: '1.0',
-  body:
-    [{
-      type: 'ColumnSet',
-      columns:
-        [{
-          type: 'Column',
-          width: '5',
-          items:
-            [{
-              type: 'Image',
-              url: 'Your avatar appears here!',
-              size: 'large',
-              horizontalAlignment: "Center",
-              style: 'person'
-            },
-            {
-              type: 'TextBlock',
-              text: 'Your name will be here!',
-              size: 'medium',
-              horizontalAlignment: "Center",
-              weight: 'Bolder'
-            },
-            {
-              type: 'TextBlock',
-              text: 'And your email goes here!',
-              size: 'small',
-              horizontalAlignment: "Center",
-              isSubtle: true,
-              wrap: false
-            }]
-        }]
-    }]
-};
-
-/* On mention with card example
-ex User enters @botname 'card me' phrase, the bot will produce a personalized card - https://developer.webex.com/docs/api/guides/cards
-*/
-framework.hears('card me', function (bot, trigger) {
-  console.log("someone asked for a card");
-  responded = true;
-  let avatar = trigger.person.avatar;
-
-  cardJSON.body[0].columns[0].items[0].url = (avatar) ? avatar : `${config.webhookUrl}/missing-avatar.jpg`;
-  cardJSON.body[0].columns[0].items[1].text = trigger.person.displayName;
-  cardJSON.body[0].columns[0].items[2].text = trigger.person.emails[0];
-  bot.sendCard(cardJSON, 'This is customizable fallback text for clients that do not support buttons & cards');
-});
-
-/* On mention reply example
-ex User enters @botname 'reply' phrase, the bot will post a threaded reply
-*/
-framework.hears('reply', function (bot, trigger) {
-  console.log("someone asked for a reply.  We will give them two.");
-  responded = true;
-  bot.reply(trigger.message, 
-    'This is threaded reply sent using the `bot.reply()` method.',
-    'markdown');
-  var msg_attach = {
-    text: "This is also threaded reply with an attachment sent via bot.reply(): ",
-    file: 'https://media2.giphy.com/media/dTJd5ygpxkzWo/giphy-downsized-medium.gif'
-  };
-  bot.reply(trigger.message, msg_attach);
+  let message = 'Here are the rotation details \n';
+  rotation.forEach(name => {
+    message.concat(name + '\n')
+  })
+  bot.say("markdown", message);
 });
 
 /* On mention with unexpected bot command
@@ -214,9 +101,8 @@ framework.hears(/.*/, function (bot, trigger) {
   // This will fire for any input so only respond if we haven't already
   if (!responded) {
     console.log(`catch-all handler fired for user input: ${trigger.text}`);
-    bot.say(`Sorry, I don't know how to respond to "${trigger.text}"`)
-      .then(() => sendHelp(bot))
-      .catch((e) => console.error(`Problem in the unexepected command hander: ${e.message}`));
+    bot.say(`Sorry, I don't know how to respond to "${trigger.text}". Use help for a list of available commands`)
+      .catch((e) => console.error(`Problem in the unexpected command handler: ${e.message}`));
   }
   responded = false;
 });
