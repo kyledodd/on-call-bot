@@ -76,7 +76,7 @@ ex User enters @botname who, the bot will write back in markdown
 framework.hears('who', function (bot) {
   console.log("who command received");
   responded = true;
-  bot.say("markdown", `The METCIRT on-call person is <@personalEmail:${rotation[0]}>`);
+  bot.say("markdown", `The METCIRT on-call person is <@personEmail:${rotation[0]}>`);
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
