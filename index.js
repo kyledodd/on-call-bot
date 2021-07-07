@@ -1,10 +1,10 @@
 // Webex Bot Starter - featuring the webex-node-bot-framework - https://www.npmjs.com/package/webex-node-bot-framework
 
-var framework = require('webex-node-bot-framework');
-var webhook = require('webex-node-bot-framework/webhook');
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
+let framework = require('webex-node-bot-framework');
+const webhook = require('webex-node-bot-framework/webhook');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
 app.use(bodyParser.json());
 app.use(express.static('images'));
 const config = require("./config.json");
@@ -28,12 +28,12 @@ framework.on('spawn', (bot, id, actorId) => {
     console.log(`While starting up, the framework found our bot in a space called: ${bot.room.title}`);
   } else {
     // When actorId is present it means someone added your bot got added to a new space
-    // Lets find out more about them..
-    var msg = 'You can say `help` to get the list of words I am able to respond to.';
+    // Let's find out more about them..
+    let msg = 'You can say `help` to get the list of words I am able to respond to.';
     bot.webex.people.get(actorId).then((user) => {
       msg = `Hello there ${user.displayName}. ${msg}`; 
     }).catch((e) => {
-      console.error(`Failed to lookup user details in framwork.on("spawn"): ${e.message}`);
+      console.error(`Failed to lookup user details in framework.on("spawn"): ${e.message}`);
       msg = `Hello there. ${msg}`;  
     }).finally(() => {
       // Say hello, and tell users what you do!
@@ -52,15 +52,22 @@ framework.on('spawn', (bot, id, actorId) => {
 // Process incoming messages
 
 let responded = false;
+let rotation = ['Stephens, Kyle', 'Langlois, AJ', 'Dodd, Kyle', 'Vobbilichetty, Vinay', 'Smith, Cedric'];
 /* On mention with command
 ex User enters @botname help, the bot will write back in markdown
 */
-framework.hears(/help|what can i (do|say)|what (can|do) you do/i, function (bot, trigger) {
-  console.log(`someone needs help! They asked ${trigger.text}`);
+framework.hears('help', function (bot) {
+  console.log(`someone needs help!`);
   responded = true;
-  bot.say(`Hello ${trigger.person.displayName}.`)
-    .then(() => sendHelp(bot))
-    .catch((e) => console.error(`Problem in help hander: ${e.message}`));
+  bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
+      '1. **who**  (get the name of the current METCIRT on-call person) \n' +
+      '2. **info**  (get your personal details) \n' +
+      '3. **space**  (get details about this space) \n' +
+      '4. **card me** (a cool card!) \n' +
+      '5. **say hi to everyone** (everyone gets a greeting using a call to the Webex SDK) \n' +
+      '6. **reply** (have bot reply to your message) \n' +
+      '7. **help** (what you are reading now)')
+    .catch((e) => console.error(`Problem in help handler: ${e.message}`));
 });
 
 /* On mention with command
@@ -69,10 +76,10 @@ ex User enters @botname who, the bot will write back in markdown
 framework.hears('who', function (bot) {
   console.log("who command received");
   responded = true;
-  bot.say("markdown", "The METCIRT on-call person is Kyle Stephens!!");
+  bot.say("markdown", `The METCIRT on-call person is @${rotation[0]}`);
 });
 
-/* On mention with command, using other trigger data, can use lite markdown formatting
+/* On mention with command, using other trigger data, can use lite Markdown formatting
 ex User enters @botname 'info' phrase, the bot will provide personal details
 */
 framework.hears('info', function (bot, trigger) {
@@ -110,7 +117,7 @@ framework.hears('space', function (bot) {
    sdk to call any Webex API.  API Doc: https://webex.github.io/webex-js-sdk/api/
 */
 framework.hears("say hi to everyone", function (bot) {
-  console.log("say hi to everyone.  Its a party");
+  console.log("say hi to everyone. Its a party");
   responded = true;
   // Use the webex SDK to get the list of users in this space
   bot.webex.memberships.list({roomId: bot.room.id})
@@ -201,7 +208,7 @@ framework.hears('reply', function (bot, trigger) {
 });
 
 /* On mention with unexpected bot command
-   Its a good practice is to gracefully handle unexpected input
+   It's a good practice to gracefully handle unexpected input
 */
 framework.hears(/.*/, function (bot, trigger) {
   // This will fire for any input so only respond if we haven't already
@@ -214,19 +221,7 @@ framework.hears(/.*/, function (bot, trigger) {
   responded = false;
 });
 
-function sendHelp(bot) {
-  bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
-    '1. **who**   (get the name of the current METCIRT on-call person) \n' +
-    '2. **info**  (get your personal details) \n' +
-    '3. **space**  (get details about this space) \n' +
-    '4. **card me** (a cool card!) \n' +
-    '5. **say hi to everyone** (everyone gets a greeting using a call to the Webex SDK) \n' +
-    '6. **reply** (have bot reply to your message) \n' +
-    '7. **help** (what you are reading now)');
-}
-
-
-//Server config & housekeeping
+// Server config & housekeeping
 // Health Check
 app.get('/', function (req, res) {
   res.send(`I'm alive.`);
