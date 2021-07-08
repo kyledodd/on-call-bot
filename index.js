@@ -58,6 +58,7 @@ framework.hears('help', function (bot) {
   bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
       '**who**  (get the name of the current METCIRT on-call person) \n' +
       '**rotation**  (get the rotation details) \n' +
+      '**details**  (get the on-call details) \n' +
       '**dev** (get developer details) \n' +
       '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
