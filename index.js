@@ -48,10 +48,7 @@ framework.on('spawn', (bot, id, actorId) => {
 // Process incoming messages
 let responded = false;
 let rotation = ['kyle.stephens1@metlife.com|Stephens, Kyle', 'aj.langlois@metlife.com|Langlois, AJ', 'kyle.dodd@metlife.com|Dodd, Kyle', 'vinay.vobbilichetty@metlife.com|Vobbilichetty, Vinay', 'cedric.smith@metlife.com|Smith, Cedric'];
-<<<<<<< HEAD
 
-=======
->>>>>>> 10cd15818ba716b88399f6818d92429c419f837a
 /* On mention with command
 ex User enters @botname help, the bot will write back in markdown
 */
