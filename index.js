@@ -47,7 +47,7 @@ framework.on('spawn', (bot, id, actorId) => {
 
 // Process incoming messages
 let responded = false;
-let rotation = ['Stephens, Kyle', 'Langlois, AJ', 'Dodd, Kyle', 'Vobbilichetty, Vinay', 'Smith, Cedric'];
+let rotation = ['kyle.stephens1@metlife.com|Stephens, Kyle', 'aj.langlois@metlife.com|Langlois, AJ', 'kyle.dodd@metlife.com|Dodd, Kyle', 'vinay.vobbilichetty@metlife.com|Vobbilichetty, Vinay', 'cedric.smith@metlife.com|Smith, Cedric'];
 
 /* On mention with command
 ex User enters @botname help, the bot will write back in markdown
@@ -69,7 +69,7 @@ ex User enters @botname who, the bot will write back in markdown
 framework.hears('who', function (bot) {
   console.log("who command received");
   responded = true;
-  bot.say("markdown", `The METCIRT on-call person is @${rotation[0]}`);
+  bot.say("markdown", `The METCIRT on-call person is <@personEmail:${rotation[0]}>`);
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
@@ -92,6 +92,18 @@ framework.hears('rotation', function (bot) {
     message.concat(name + '\n')
   })
   bot.say("markdown", message);
+});
+
+/* On mention with command, details
+ex User enters @botname 'details' phrase, bot will provide the details regarding on-call rotation and time
+*/
+framework.hears('details', function (bot) {
+    console.log("details command received");
+    responded = true;
+    bot.say("markdown", 'T3 On-Call Details is as follows:\n' +
+        'Shift Details: The on-call rotation starts at 9AM EST on Mondays and lasts until same time the following Monday.\n' +
+        'Responsibilities: Maintain 24/7 availability, watch for and ack critical escalations, may run point on high priority escalations.\n' +
+        'Further: Monitor dashboards and lead weekly regional calls. Please see OneNote for further instruction.');
 });
 
 /* On mention with unexpected bot command
