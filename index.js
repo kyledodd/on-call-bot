@@ -85,7 +85,7 @@ ex User enters @botname 'info' phrase, the bot will provide personal details
 framework.hears('dev', function (bot) {
   console.log("dev command received");
   responded = true;
-  bot.say("markdown", 'This bot is maintained by <@personEmail:vinay.vobbilichetty@metlife.com|Vinay Vobbilichetty> from METCIRT. Reach out to him for feedback or feature requests');
+  bot.say("markdown", 'This bot is maintained by <@personEmail:vvobbilichetty@metlife.com|Vinay Vobbilichetty> from METCIRT. Reach out to him for feedback or feature requests');
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
