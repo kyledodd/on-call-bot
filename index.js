@@ -86,10 +86,7 @@ ex User enters @botname 'info' phrase, the bot will provide personal details
 framework.hears('rotation', function (bot) {
   console.log("rotation command received");
   responded = true;
-  let message = 'Here are the rotation details \n';
-  rotation.forEach(name => {
-    message.concat(name + '\n')
-  })
+  let message = 'Here are the rotation details \n' + rotation.join('\n');
   bot.say("markdown", message);
 });
 
