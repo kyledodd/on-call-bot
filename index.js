@@ -95,7 +95,7 @@ framework.hears('rotation', function (bot) {
   console.log("rotation command received");
   responded = true;
   let rotation_display = rotation.map(person => {
-    return '<@personEmail:' + person + '}>';
+    return '<@personEmail:' + person + '>';
   })
   let message = 'Here are the rotation details \n' + rotation_display.join('\n');
   bot.say("markdown", message);
