@@ -59,6 +59,7 @@ framework.hears('help', function (bot) {
       '**who**  (get the name of the current METCIRT on-call person) \n' +
       '**rotation**  (get the rotation details) \n' +
       '**details**  (get the on-call details) \n' +
+      '**set**  (set a different on-call outside of rotation) \n' +
       '**dev** (get developer details) \n' +
       '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
@@ -103,6 +104,11 @@ framework.hears('details', function (bot) {
         'Responsibilities: Maintain 24/7 availability, watch for and ack critical escalations, may run point on high priority escalations.\n' +
         'Further: Monitor dashboards and lead weekly regional calls. Please see OneNote for further instruction.');
 });
+
+/* On mention with command, set @Mention
+ex User enters @botname set @Mention phrase, bot will set the current on-call to @Mention
+*/
+framework.hears(/^.*set.*/i, function (bot, ))
 
 /* On mention with unexpected bot command
    It's a good practice to gracefully handle unexpected input
