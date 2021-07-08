@@ -51,7 +51,7 @@ let rotation = [
                 'kyle.stephens1@metlife.com|Kyle Stephens',
                 'aj.langlois@metlife.com|AJ Langlois',
                 'kyle.dodd@metlife.com|Kyle Dodd',
-                'vinay.vobbilichetty@metlife.com|Vinay Vobbilichetty',
+                'vvobbilichetty@metlife.com|Vinay Vobbilichetty',
                 'cedric.smith@metlife.com|Cedric Smith'
               ];
 
