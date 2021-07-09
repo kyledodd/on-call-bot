@@ -135,7 +135,7 @@ framework.hears('alert2', function () {
     headers: {
         'Content-Type': 'application/json',
         'Content-Length': data.length,
-        'Authentication': 'NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c'
+        'Authorization': 'Bearer NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c'
     }
   }
 
