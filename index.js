@@ -198,7 +198,7 @@ framework.hears('skip', function (bot) {
     console.log("skip command received");
     responded = true;
     rotation.push(rotation.shift());
-    bot.say("markdown", `Skipped the current on-call. The new on-call is <@personEmail:${rotation[0]}.`);
+    bot.say("markdown", `Skipped the current on-call. The new on-call is <@personEmail:${rotation[0]}>.`);
 })
 
 /* On mention with unexpected bot command
