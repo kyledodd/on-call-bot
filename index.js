@@ -101,16 +101,17 @@ framework.hears('rotation', function (bot) {
   bot.say("markdown", message);
 });
 
-/* On mention with command, details
+/* On mention with command 'responsibilities'
 ex User enters @botname 'details' phrase, bot will provide the details regarding on-call rotation and time
 */
 framework.hears('responsibilities', function (bot) {
     console.log("responsibilities command received");
     responded = true;
+    link = 'https://my.metlife.com/sites/CyberSecurity-Tier3/_layouts/15/Doc.aspx?sourcedoc={2ef52a56-8635-4834-b90a-5eac426c5007}&action=edit&wd=target%28Team%20Info.one%7C748ea7db-c469-6246-ba69-1ebd186ca725%2FOn-Call%20Policy%7Ca5e2b24f-a141-6c48-a8b2-c1cf451d5b62%2F%29';
     bot.say("markdown", 'T3 On-Call responsibilities are as follows:\n' +
         'Shift Details: The on-call rotation starts at 9AM EST on Mondays and lasts until same time the following Monday.\n' +
         'Responsibilities: Maintain 24/7 availability, watch for and ack critical escalations, may run point on high priority escalations.\n' +
-        'Further: Monitor dashboards and lead weekly regional calls. Please see OneNote for further instruction.');
+        `Further: Monitor dashboards and lead weekly regional calls. Please see [OneNote](${link}) for further instruction.`);
 });
 
 /* On mention with unexpected bot command
