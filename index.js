@@ -65,6 +65,7 @@ framework.hears('help', function (bot) {
       '**who**  (get the name of the current METCIRT on-call person) \n' +
       '**rotation**  (get the rotation details) \n' +
       '**responsibilities**  (get the on-call responsibilities) \n' +
+      '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3)'
       '**dev** (get the developer details) \n' +
       '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
@@ -113,6 +114,34 @@ framework.hears('responsibilities', function (bot) {
         'Responsibilities: Maintain 24/7 availability, watch for and ack critical escalations, may run point on high priority escalations.\n' +
         `Further: Monitor dashboards and lead weekly regional calls. Please see [OneNote](${link}) for further instruction.`);
 });
+
+/* On mention with command, assign @Mention
+ex User enters @botname assign @Mention phrase, bot will set the current on-call to @Mention
+*/
+framework.hears('assign', function (bot, trigger) {
+    console.log("assign command received");
+    responded = true;
+    let trigger_text = `${trigger.text}`;
+    let name_array = trigger_text.split(" ");
+    let name = name_array[2];
+    let rotation_length = rotation.length;
+    for (let i = 0 ; i < rotation_length; i++) {
+        let val = rotation[i];
+        if (val.includes(name)) {
+            rotation[i] = rotation[0];
+            rotation[0] = val;
+            bot.say("markdown", `The METCIRT on-call has been set to <@personEmail:${rotation[0]}.\n` +
+                `Please see the updated schedule with the ***rotation*** command. Thanks.`);
+        } else if (i == rotation_length - 1) {
+            bot.say("markdown", "Either that name isn't in here or there's something wrong with the assign function. Please contact my dev.");
+        }
+    }
+});
+
+/* On mention with command 'skip'
+ex use @botname skip, bot will skip over the current user and cycle to the next.
+ */
+//TODO
 
 /* On mention with unexpected bot command
    It's a good practice to gracefully handle unexpected input
