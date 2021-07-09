@@ -4,7 +4,8 @@ let framework = require('webex-node-bot-framework');
 const webhook = require('webex-node-bot-framework/webhook');
 const express = require('express');
 const bodyParser = require('body-parser');
-const https = require('https')
+const https = require('https');
+const markdown = require('markdown').markdown;
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('images'));
@@ -125,7 +126,7 @@ framework.hears('alert2', function () {
 
   const data = JSON.stringify({
     "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
-    "text": message
+    "text": markdown.parse(message)
   })
 
   const options = {
