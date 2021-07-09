@@ -176,6 +176,7 @@ framework.hears('assign', function (bot, trigger) {
     let trigger_text = `${trigger.text}`;
     let name_array = trigger_text.split(" ");
     let name = name_array[2];
+    name = name.replace(/\W/g, '');
     let rotation_length = rotation.length;
     for (let i = 0 ; i < rotation_length; i++) {
         let val = rotation[i];
