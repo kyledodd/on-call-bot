@@ -124,7 +124,6 @@ framework.hears('alert2', function () {
   let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
 
   const data = JSON.stringify({
-    "Authentication": "NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c",
     "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
     "text": message
   })
@@ -134,8 +133,9 @@ framework.hears('alert2', function () {
     path: '/v1/messages',
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': data.length
+        'Content-Type': 'application/json',
+        'Content-Length': data.length,
+        'Authentication': 'NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c'
     }
   }
 
