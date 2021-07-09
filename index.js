@@ -65,6 +65,7 @@ framework.hears('help', function (bot) {
       '**who**  (get the name of the current METCIRT on-call person) \n' +
       '**rotation**  (get the rotation details) \n' +
       '**responsibilities**  (get the on-call responsibilities) \n' +
+      '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
       '**dev** (get the developer details) \n' +
       '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
