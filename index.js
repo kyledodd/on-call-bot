@@ -65,7 +65,8 @@ framework.hears('help', function (bot) {
       '**who**  (get the name of the current METCIRT on-call person) \n' +
       '**rotation**  (get the rotation details) \n' +
       '**responsibilities**  (get the on-call responsibilities) \n' +
-      '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3)'
+      '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3) \n' +
+      '***skip***  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
       '**dev** (get the developer details) \n' +
       '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
@@ -130,8 +131,9 @@ framework.hears('assign', function (bot, trigger) {
         if (val.includes(name)) {
             rotation[i] = rotation[0];
             rotation[0] = val;
-            bot.say("markdown", `The METCIRT on-call has been set to <@personEmail:${rotation[0]}.\n` +
+            bot.say("markdown", `The METCIRT on-call has been set to <@personEmail:${rotation[0]}>.\n` +
                 `Please see the updated schedule with the ***rotation*** command. Thanks.`);
+            break
         } else if (i == rotation_length - 1) {
             bot.say("markdown", "Either that name isn't in here or there's something wrong with the assign function. Please contact my dev.");
         }
@@ -141,7 +143,12 @@ framework.hears('assign', function (bot, trigger) {
 /* On mention with command 'skip'
 ex use @botname skip, bot will skip over the current user and cycle to the next.
  */
-//TODO
+framework.hears('skip', function (bot) {
+    console.log("skip command received");
+    responded = true;
+    rotation.push(rotation.shift());
+    bot.say("markdown", `Skipped the current on-call. The new on-call is <@personEmail:${rotation[0]}.`);
+})
 
 /* On mention with unexpected bot command
    It's a good practice to gracefully handle unexpected input
