@@ -4,6 +4,7 @@ let framework = require('webex-node-bot-framework');
 const webhook = require('webex-node-bot-framework/webhook');
 const express = require('express');
 const bodyParser = require('body-parser');
+const https = require('https')
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('images'));
@@ -108,8 +109,47 @@ ex User enters @botname 'alert' phrase, the bot will provide the next week's on-
 framework.hears('alert', function (bot) {
   console.log("alert command received");
   responded = true;
-  let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept it, you will be rewarded with i day of PTO!!`;
+  let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
   bot.say("markdown", message);
+});
+
+/* On mention with command, using other trigger data, can use lite Markdown formatting
+ex User enters @botname 'alert' phrase, the bot will provide the next week's on-call details
+*/
+framework.hears('alert2', function () {
+  console.log("alert2 command received");
+  responded = true;
+  let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+
+  const data = JSON.stringify({
+    "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
+    "text": message
+  })
+
+  const options = {
+    hostname: 'webexapis.com',
+    path: '/v1/messages',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': data.length
+    }
+  }
+
+  const req = https.request(options, res => {
+    console.log(`statusCode: ${res.statusCode}`)
+
+    res.on('data', d => {
+      process.stdout.write(d)
+    })
+  })
+
+  req.on('error', error => {
+    console.error(error)
+  })
+
+  req.write(data)
+  req.end()
 });
 
 /* On mention with command 'responsibilities'
