@@ -124,6 +124,7 @@ framework.hears('alert2', function () {
   let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
 
   const data = JSON.stringify({
+    "Authentication": "NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c",
     "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
     "text": message
   })
@@ -160,7 +161,7 @@ ex User enters @botname 'details' phrase, bot will provide the details regarding
 framework.hears('responsibilities', function (bot) {
     console.log("responsibilities command received");
     responded = true;
-    link = 'https://my.metlife.com/sites/CyberSecurity-Tier3/_layouts/15/Doc.aspx?sourcedoc={2ef52a56-8635-4834-b90a-5eac426c5007}&action=edit&wd=target%28Team%20Info.one%7C748ea7db-c469-6246-ba69-1ebd186ca725%2FOn-Call%20Policy%7Ca5e2b24f-a141-6c48-a8b2-c1cf451d5b62%2F%29';
+    let link = 'https://my.metlife.com/sites/CyberSecurity-Tier3/_layouts/15/Doc.aspx?sourcedoc={2ef52a56-8635-4834-b90a-5eac426c5007}&action=edit&wd=target%28Team%20Info.one%7C748ea7db-c469-6246-ba69-1ebd186ca725%2FOn-Call%20Policy%7Ca5e2b24f-a141-6c48-a8b2-c1cf451d5b62%2F%29';
     bot.say("markdown", 'T3 On-Call responsibilities are as follows:\n' +
         'Shift Details: The on-call rotation starts at 9 AM Eastern on Mondays and lasts until same time the following Monday.\n' +
         'Responsibilities: Maintain 24/7 availability, watch for and ack critical escalations, may run point on high priority escalations.\n' +
@@ -185,8 +186,8 @@ framework.hears('assign', function (bot, trigger) {
             rotation[0] = val;
             bot.say("markdown", `The METCIRT on-call has been set to <@personEmail:${rotation[0]}>.\n` +
                 `Please see the updated schedule with the ***rotation*** command. Thanks.`);
-            break
-        } else if (i == rotation_length - 1) {
+            break;
+        } else if (i === rotation_length - 1) {
             bot.say("markdown", "Either that name isn't in here or there's something wrong with the assign function. Please contact my dev.");
         }
     }
