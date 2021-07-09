@@ -4,6 +4,7 @@ let framework = require('webex-node-bot-framework');
 const webhook = require('webex-node-bot-framework/webhook');
 const express = require('express');
 const bodyParser = require('body-parser');
+const https = require('https')
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('images'));
@@ -66,6 +67,7 @@ framework.hears('help', function (bot) {
       '**rotation**  (get the rotation details) \n' +
       '**responsibilities**  (get the on-call responsibilities) \n' +
       '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3)'
+      '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
       '**dev** (get the developer details) \n' +
       '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
@@ -90,16 +92,65 @@ framework.hears('dev', function (bot) {
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
-ex User enters @botname 'info' phrase, the bot will provide personal details
+ex User enters @botname 'rotation' phrase, the bot will provide the rotation details
 */
 framework.hears('rotation', function (bot) {
   console.log("rotation command received");
   responded = true;
   let rotation_display = rotation.map(person => {
-    return '<@personEmail:' + person + '>';
+    return `<@personEmail:${person}>`;
   })
   let message = 'Here are the rotation details \n' + rotation_display.join('\n');
   bot.say("markdown", message);
+});
+
+/* On mention with command, using other trigger data, can use lite Markdown formatting
+ex User enters @botname 'alert' phrase, the bot will provide the next week's on-call details
+*/
+framework.hears('alert', function (bot) {
+  console.log("alert command received");
+  responded = true;
+  let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+  bot.say("markdown", message);
+});
+
+/* On mention with command, using other trigger data, can use lite Markdown formatting
+ex User enters @botname 'alert' phrase, the bot will provide the next week's on-call details
+*/
+framework.hears('alert2', function () {
+  console.log("alert2 command received");
+  responded = true;
+  let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+
+  const data = JSON.stringify({
+    "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
+    "text": message
+  })
+
+  const options = {
+    hostname: 'webexapis.com',
+    path: '/v1/messages',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': data.length
+    }
+  }
+
+  const req = https.request(options, res => {
+    console.log(`statusCode: ${res.statusCode}`)
+
+    res.on('data', d => {
+      process.stdout.write(d)
+    })
+  })
+
+  req.on('error', error => {
+    console.error(error)
+  })
+
+  req.write(data)
+  req.end()
 });
 
 /* On mention with command 'responsibilities'
@@ -110,7 +161,7 @@ framework.hears('responsibilities', function (bot) {
     responded = true;
     link = 'https://my.metlife.com/sites/CyberSecurity-Tier3/_layouts/15/Doc.aspx?sourcedoc={2ef52a56-8635-4834-b90a-5eac426c5007}&action=edit&wd=target%28Team%20Info.one%7C748ea7db-c469-6246-ba69-1ebd186ca725%2FOn-Call%20Policy%7Ca5e2b24f-a141-6c48-a8b2-c1cf451d5b62%2F%29';
     bot.say("markdown", 'T3 On-Call responsibilities are as follows:\n' +
-        'Shift Details: The on-call rotation starts at 9AM EST on Mondays and lasts until same time the following Monday.\n' +
+        'Shift Details: The on-call rotation starts at 9 AM Eastern on Mondays and lasts until same time the following Monday.\n' +
         'Responsibilities: Maintain 24/7 availability, watch for and ack critical escalations, may run point on high priority escalations.\n' +
         `Further: Monitor dashboards and lead weekly regional calls. Please see [OneNote](${link}) for further instruction.`);
 });
