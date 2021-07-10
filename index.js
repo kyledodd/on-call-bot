@@ -130,7 +130,7 @@ framework.hears('alert2', function () {
 
   const data = JSON.stringify({
     "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
-    "text": markdown.parse(message)
+    "text": markdown.toHTML(message)
   })
 
   const options = {
