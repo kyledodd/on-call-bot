@@ -122,7 +122,7 @@ framework.hears('alert', function (bot) {
 
 /* runs at specified time to alert an upcoming change
 */
-cron.schedule('15 0 * * 6', () => {
+cron.schedule('*/5 * * * 6', () => {
     console.log("alert2 command received");
     responded = true;
     let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
