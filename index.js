@@ -131,8 +131,8 @@ framework.hears('alert2', function () {
     message = message.split('').reverse().join('').replace(/>(?!.*@<)/g, ';tg&').split('').reverse().join('');
 
     const data = JSON.stringify({
-        "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
-        "text": message
+        "roomId": "00fbb320-e12f-11eb-893b-47d63e6b0c52",
+        "markdown": message
     })
 
     const options = {
