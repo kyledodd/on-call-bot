@@ -69,10 +69,10 @@ framework.hears('help', function (bot) {
       '**responsibilities**  (get the on-call responsibilities) \n' +
       '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3) \n' +
       '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
-      '***skip***  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
+      '**skip**  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
       '**dev** (get the developer details) \n' +
       '**help** (what you are reading now)')
-    .catch((e) => console.error(`Problem in help handler: ${e.message}`));
+     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
 });
 
 /* On mention with command
@@ -81,7 +81,8 @@ ex User enters @botname who, the bot will write back in markdown
 framework.hears('who', function (bot) {
   console.log("who command received");
   responded = true;
-  bot.say("markdown", `The METCIRT on-call person is <@personEmail:${rotation[0]}>`);
+  bot.say("markdown", `The METCIRT on-call person is <@personEmail:${rotation[0]}>`)
+      .catch((e) => console.error(`Problem in who handler: ${e.message}`));
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
@@ -90,7 +91,8 @@ ex User enters @botname 'info' phrase, the bot will provide personal details
 framework.hears('dev', function (bot) {
   console.log("dev command received");
   responded = true;
-  bot.say("markdown", 'This bot is maintained by <@personEmail:vvobbilichetty@metlife.com|Vinay Vobbilichetty> from METCIRT. Reach out to him for feedback or feature requests');
+  bot.say("markdown", 'This bot is maintained by <@personEmail:vvobbilichetty@metlife.com|Vinay Vobbilichetty> from METCIRT. Reach out to him for feedback or feature requests')
+      .catch((e) => console.error(`Problem in dev handler: ${e.message}`));
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
@@ -103,7 +105,8 @@ framework.hears('rotation', function (bot) {
     return `<@personEmail:${person}>`;
   })
   let message = 'Here are the rotation details \n' + rotation_display.join('\n');
-  bot.say("markdown", message);
+  bot.say("markdown", message)
+      .catch((e) => console.error(`Problem in rotation handler: ${e.message}`));
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
@@ -113,7 +116,8 @@ framework.hears('alert', function (bot) {
   console.log("alert command received");
   responded = true;
   let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
-  bot.say("markdown", message);
+  bot.say("markdown", message)
+      .catch((e) => console.error(`Problem in alert handler: ${e.message}`));
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
