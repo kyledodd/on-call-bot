@@ -4,7 +4,8 @@ let framework = require('webex-node-bot-framework');
 const webhook = require('webex-node-bot-framework/webhook');
 const express = require('express');
 const bodyParser = require('body-parser');
-const https = require('https')
+const https = require('https');
+const cron = require('node-cron');
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('images'));
@@ -119,10 +120,9 @@ framework.hears('alert', function (bot) {
       .catch((e) => console.error(`Problem in alert handler: ${e.message}`));
 });
 
-/* On mention with command, using other trigger data, can use lite Markdown formatting
-ex User enters @botname 'alert' phrase, the bot will provide the next week's on-call details
+/* runs at specified time to alert an upcoming change
 */
-framework.hears('alert2', function () {
+cron.schedule('15 0 * * 6', () => {
     console.log("alert2 command received");
     responded = true;
     let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
@@ -146,20 +146,23 @@ framework.hears('alert2', function () {
         }
     }
 
-  const req = https.request(options, res => {
-    console.log(`statusCode: ${res.statusCode}`)
+    const req = https.request(options, res => {
+        console.log(`statusCode: ${res.statusCode}`)
 
-    res.on('data', d => {
-      process.stdout.write(d)
+        res.on('data', d => {
+            process.stdout.write(d)
+        })
     })
-  })
 
-  req.on('error', error => {
-    console.error(error)
-  })
+    req.on('error', error => {
+        console.error(error)
+    })
 
-  req.write(data)
-  req.end()
+    req.write(data)
+    req.end()
+}, {
+    scheduled: true,
+    recoverMissedExecutions: false
 });
 
 /* On mention with command 'responsibilities'
