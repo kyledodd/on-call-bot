@@ -50,12 +50,12 @@ framework.on('spawn', (bot, id, actorId) => {
 // Process incoming messages
 let responded = false;
 let rotation = [
-                'kyle.stephens1@metlife.com|Kyle Stephens',
-                'aj.langlois@metlife.com|AJ Langlois',
-                'kyle.dodd@metlife.com|Kyle Dodd',
-                'vvobbilichetty@metlife.com|Vinay Vobbilichetty',
-                'cedric.smith@metlife.com|Cedric Smith'
-              ];
+                    'kyle.stephens1@metlife.com|Kyle Stephens',
+                    'aj.langlois@metlife.com|AJ Langlois',
+                    'kyle.dodd@metlife.com|Kyle Dodd',
+                    'vvobbilichetty@metlife.com|Vinay Vobbilichetty',
+                    'cedric.smith@metlife.com|Cedric Smith'
+               ];
 
 /* On mention with command
 ex User enters @botname help, the bot will write back in markdown
@@ -172,7 +172,8 @@ framework.hears('responsibilities', function (bot) {
     bot.say("markdown", 'T3 On-Call responsibilities are as follows:\n' +
         'Shift Details: The on-call rotation starts at 9 AM Eastern on Mondays and lasts until same time the following Monday.\n' +
         'Responsibilities: Maintain 24/7 availability, watch for and ack critical escalations, may run point on high priority escalations.\n' +
-        `Further: Monitor dashboards and lead weekly regional calls. Please see [OneNote](${link}) for further instruction.`);
+        `Further: Monitor dashboards and lead weekly regional calls. Please see [OneNote](${link}) for further instruction.`)
+        .catch((e) => console.error(`Problem in responsibilities handler: ${e.message}`));
 });
 
 /* On mention with command, assign @Mention
@@ -192,10 +193,12 @@ framework.hears('assign', function (bot, trigger) {
             rotation[i] = rotation[0];
             rotation[0] = val;
             bot.say("markdown", `The METCIRT on-call has been set to <@personEmail:${rotation[0]}>.\n` +
-                `Please see the updated schedule with the ***rotation*** command. Thanks.`);
+                `Please see the updated schedule with the ***rotation*** command. Thanks.`)
+                .catch((e) => console.error(`Problem in assign handler: ${e.message}`));
             break;
         } else if (i === rotation_length - 1) {
-            bot.say("markdown", "Either that name isn't in here or there's something wrong with the assign function. Please contact my dev.");
+            bot.say("markdown", "Either that name isn't in here or there's something wrong with the assign function. Please contact my dev.")
+                .catch((e) => console.error(`Problem finding the person in assign handler: ${e.message}`));
         }
     }
 });
@@ -207,7 +210,8 @@ framework.hears('skip', function (bot) {
     console.log("skip command received");
     responded = true;
     rotation.push(rotation.shift());
-    bot.say("markdown", `Skipped the current on-call. The new on-call is <@personEmail:${rotation[0]}>.`);
+    bot.say("markdown", `Skipped the current on-call. The new on-call is <@personEmail:${rotation[0]}>.`)
+        .catch((e) => console.error(`Problem in skip handler: ${e.message}`));
 })
 
 /* On mention with unexpected bot command
