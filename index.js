@@ -120,15 +120,15 @@ framework.hears('alert', function (bot) {
       .catch((e) => console.error(`Problem in alert handler: ${e.message}`));
 });
 
-/* runs at specified time to alert an upcoming change
+/* runs “At 12:00 on Saturday.” to alert an upcoming change
 */
-cron.schedule('*/5 * * * 6', () => {
-    console.log("alert2 command received");
+cron.schedule('0 12 * * 6', () => {
+    console.log("alert for shift change has been sent out");
     responded = true;
-    let message = `<@personEmail:${rotation[1]}>, your on-call duty starts this Monday. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+    let message = `<@personEmail:${rotation[1]}>, your on-call duty starts on Monday. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
 
     const data = JSON.stringify({
-        "roomId": "00fbb320-e12f-11eb-893b-47d63e6b0c52",
+        "roomId": "im?space=e7efc2d0-97b7-11e9-8295-7bf0166225e8",
         "markdown": message
     })
 
