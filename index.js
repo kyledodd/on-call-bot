@@ -230,7 +230,7 @@ framework.hears(/.*/, function (bot, trigger) {
 // Server config & housekeeping
 // Health Check
 app.get('/', function (req, res) {
-  res.send(`I'm alive.`);
+  res.send(`I'm alive. ${Date.now()}`);
 });
 
 app.post('/', webhook(framework));
