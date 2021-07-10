@@ -125,10 +125,7 @@ framework.hears('alert', function (bot) {
 cron.schedule('*/5 * * * 6', () => {
     console.log("alert2 command received");
     responded = true;
-    let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
-
-    message = message.replace(/<(?!@)/g, '&lt;');
-    message = message.split('').reverse().join('').replace(/>(?!.*@<)/g, ';tg&').split('').reverse().join('');
+    let message = `<@personEmail:${rotation[1]}>, your on-call duty starts this Monday. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
 
     const data = JSON.stringify({
         "roomId": "00fbb320-e12f-11eb-893b-47d63e6b0c52",
