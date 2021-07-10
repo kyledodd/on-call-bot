@@ -122,13 +122,13 @@ framework.hears('alert', function (bot) {
 
 /* runs “At 12:00 on Saturday.” to alert an upcoming change
 */
-cron.schedule('0 12 * * 6', () => {
+cron.schedule('0 17 * * 6', () => {
     console.log("alert for shift change has been sent out");
     responded = true;
     let message = `<@personEmail:${rotation[1]}>, your on-call duty starts on Monday. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
 
     const data = JSON.stringify({
-        "roomId": "im?space=e7efc2d0-97b7-11e9-8295-7bf0166225e8",
+        "roomId": "e7efc2d0-97b7-11e9-8295-7bf0166225e8",
         "markdown": message
     })
 
