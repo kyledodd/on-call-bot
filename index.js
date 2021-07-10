@@ -17,34 +17,34 @@ framework.start().then();
 console.log("Starting framework, please wait...");
 
 framework.on("initialized", function () {
-  console.log("framework is all fired up! [Press CTRL-C to quit]");
+    console.log("framework is all fired up! [Press CTRL-C to quit]");
 });
 
 // A spawn event is generated when the framework finds a space with your bot in it
 // If actorId is set, it means that a user has just added your bot to a new space
 // If not, the framework has discovered your bot in an existing space
 framework.on('spawn', (bot, id, actorId) => {
-  if (actorId) {
-    // When actorId is present it means someone added your bot got added to a new space
-    // Let's find out more about them..
-    let msg = 'You can say `help` to get the list of words I am able to respond to.';
-    bot.webex.people.get(actorId).then(() => {
-      msg = `Hello there. ${msg}`;
-    }).catch((e) => {
-      console.error(`Failed to lookup user details in framework.on("spawn"): ${e.message}`);
-      msg = `Hello there. ${msg}`;
-    }).finally(() => {
-      // Say hello, and tell users what you do!
-      if (!bot.isDirect) {
-        let botName = bot.person.displayName;
-        msg += `\n\nIn order for me to see your messages in this group space, be sure to *@mention* ${botName}.`;
-      }
-      bot.say('markdown', msg);
-    });
-  } else {
-    // don't say anything here or your bot's spaces will get spammed every time your server is restarted
-    console.log(`While starting up, the framework found our bot in a space called: ${bot.room.title}`);
-  }
+    if (actorId) {
+        // When actorId is present it means someone added your bot got added to a new space
+        // Let's find out more about them..
+        let msg = 'You can say `help` to get the list of words I am able to respond to.';
+        bot.webex.people.get(actorId).then(() => {
+            msg = `Hello there. ${msg}`;
+        }).catch((e) => {
+            console.error(`Failed to lookup user details in framework.on("spawn"): ${e.message}`);
+            msg = `Hello there. ${msg}`;
+        }).finally(() => {
+            // Say hello, and tell users what you do!
+            if (!bot.isDirect) {
+                let botName = bot.person.displayName;
+                msg += `\n\nIn order for me to see your messages in this group space, be sure to *@mention* ${botName}.`;
+            }
+            bot.say('markdown', msg);
+        });
+    } else {
+        // don't say anything here or your bot's spaces will get spammed every time your server is restarted
+        console.log(`While starting up, the framework found our bot in a space called: ${bot.room.title}`);
+    }
 });
 
 // Process incoming messages
@@ -61,51 +61,51 @@ let rotation = [
 ex User enters @botname help, the bot will write back in markdown
 */
 framework.hears('help', function (bot) {
-  console.log(`someone needs help!`);
-  responded = true;
-  bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
-      '**who**  (get the name of the current METCIRT on-call person) \n' +
-      '**rotation**  (get the rotation details) \n' +
-      '**responsibilities**  (get the on-call responsibilities) \n' +
-      '**assign @USER**  (swap the current on-call with the tagged @USER if they are in T3) \n' +
-      '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
-      '**skip**  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
-      '**dev** (get the developer details) \n' +
-      '**help** (what you are reading now)')
-     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
+    console.log(`someone needs help!`);
+    responded = true;
+    bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
+        '**who**  (get the name of the current METCIRT on-call person) \n' +
+        '**rotation**  (get the rotation details) \n' +
+        '**responsibilities**  (get the on-call responsibilities) \n' +
+        '**assign @USER**  (swap the current on-call with the tagged @USER if they are in T3) \n' +
+        '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
+        '**skip**  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
+        '**dev** (get the developer details) \n' +
+        '**help** (what you are reading now)')
+        .catch((e) => console.error(`Problem in help handler: ${e.message}`));
 });
 
 /* On mention with command
 ex User enters @botname who, the bot will write back in markdown
 */
 framework.hears('who', function (bot) {
-  console.log("who command received");
-  responded = true;
-  bot.say("markdown", `The METCIRT on-call person is <@personEmail:${rotation[0]}>`)
-      .catch((e) => console.error(`Problem in who handler: ${e.message}`));
+    console.log("who command received");
+    responded = true;
+    bot.say("markdown", `The METCIRT on-call person is <@personEmail:${rotation[0]}>`)
+        .catch((e) => console.error(`Problem in who handler: ${e.message}`));
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
 ex User enters @botname 'info' phrase, the bot will provide personal details
 */
 framework.hears('dev', function (bot) {
-  console.log("dev command received");
-  responded = true;
-  bot.say("markdown", 'This bot is maintained by <@personEmail:vvobbilichetty@metlife.com|Vinay Vobbilichetty> from METCIRT. Reach out to him for feedback or feature requests')
-      .catch((e) => console.error(`Problem in dev handler: ${e.message}`));
+    console.log("dev command received");
+    responded = true;
+    bot.say("markdown", 'This bot is maintained by <@personEmail:vvobbilichetty@metlife.com|Vinay Vobbilichetty> from METCIRT. Reach out to him for feedback or feature requests')
+        .catch((e) => console.error(`Problem in dev handler: ${e.message}`));
 });
 
 /* On mention with command, using other trigger data, can use lite Markdown formatting
 ex User enters @botname 'rotation' phrase, the bot will provide the rotation details
 */
 framework.hears('rotation', function (bot) {
-  console.log("rotation command received");
-  responded = true;
-  let rotation_display = rotation.map(person => {
-    return `<@personEmail:${person}>`;
-  })
-  let message = 'Here are the rotation details \n' + rotation_display.join('\n');
-  bot.say("markdown", message)
+    console.log("rotation command received");
+    responded = true;
+    let rotation_display = rotation.map(person => {
+        return `<@personEmail:${person}>`;
+    })
+    let message = 'Here are the rotation details \n' + rotation_display.join('\n');
+    bot.say("markdown", message)
       .catch((e) => console.error(`Problem in rotation handler: ${e.message}`));
 });
 
@@ -113,10 +113,10 @@ framework.hears('rotation', function (bot) {
 ex User enters @botname 'alert' phrase, the bot will provide the next week's on-call details
 */
 framework.hears('alert', function (bot) {
-  console.log("alert command received");
-  responded = true;
-  let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
-  bot.say("markdown", message)
+    console.log("alert command received");
+    responded = true;
+    let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+    bot.say("markdown", message)
       .catch((e) => console.error(`Problem in alert handler: ${e.message}`));
 });
 
