@@ -4,8 +4,7 @@ let framework = require('webex-node-bot-framework');
 const webhook = require('webex-node-bot-framework/webhook');
 const express = require('express');
 const bodyParser = require('body-parser');
-const https = require('https');
-const markdown = require('markdown').markdown;
+const https = require('https')
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('images'));
@@ -67,7 +66,7 @@ framework.hears('help', function (bot) {
       '**who**  (get the name of the current METCIRT on-call person) \n' +
       '**rotation**  (get the rotation details) \n' +
       '**responsibilities**  (get the on-call responsibilities) \n' +
-      '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3) \n' +
+      '**assign @USER**  (swap the current on-call with the tagged @USER if they are in T3) \n' +
       '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
       '**skip**  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
       '**dev** (get the developer details) \n' +
@@ -124,25 +123,28 @@ framework.hears('alert', function (bot) {
 ex User enters @botname 'alert' phrase, the bot will provide the next week's on-call details
 */
 framework.hears('alert2', function () {
-  console.log("alert2 command received");
-  responded = true;
-  let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+    console.log("alert2 command received");
+    responded = true;
+    let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
 
-  const data = JSON.stringify({
-    "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
-    "text": markdown.toHTML(message)
-  })
+    message = message.replace(/<(?!@)/g, '&lt;');
+    message = message.split('').reverse().join('').replace(/>(?!.*@<)/g, ';tg&').split('').reverse().join('');
 
-  const options = {
-    hostname: 'webexapis.com',
-    path: '/v1/messages',
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': data.length,
-        'Authorization': 'Bearer NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c'
+    const data = JSON.stringify({
+        "roomId": "5f9741c0-df53-11eb-82bd-791ef26f84f2",
+        "text": message
+    })
+
+    const options = {
+        hostname: 'webexapis.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length,
+            'Authorization': 'Bearer NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c'
+        }
     }
-  }
 
   const req = https.request(options, res => {
     console.log(`statusCode: ${res.statusCode}`)
