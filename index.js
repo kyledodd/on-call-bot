@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const https = require('https');
 const cron = require('node-cron');
 const app = express();
+const moment = require('moment');
 app.use(bodyParser.json());
 app.use(express.static('images'));
 const config = require("./config.json");
@@ -91,7 +92,7 @@ ex User enters @botname 'info' phrase, the bot will provide personal details
 framework.hears('dev', function (bot) {
     console.log("dev command received");
     responded = true;
-    bot.say("markdown", 'This bot is maintained by <@personEmail:vvobbilichetty@metlife.com|Vinay Vobbilichetty> from METCIRT. Reach out to him for feedback or feature requests')
+    bot.say("markdown", 'This bot is maintained by <@personEmail:vvobbilichetty@metlife.com> from METCIRT. Reach out to him for feedback or feature requests')
         .catch((e) => console.error(`Problem in dev handler: ${e.message}`));
 });
 
@@ -115,17 +116,17 @@ ex User enters @botname 'alert' phrase, the bot will provide the next week's on-
 framework.hears('alert', function (bot) {
     console.log("alert command received");
     responded = true;
-    let message = `Namaste <@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+    let message = `<@personEmail:${rotation[1]}>, please be advised that your on-call duty starts this Monday 9 AM ET.`;
     bot.say("markdown", message)
       .catch((e) => console.error(`Problem in alert handler: ${e.message}`));
 });
 
-/* runs “At 12:00 on Saturday.” to alert an upcoming change
+/* runs “At 12:00 on Saturday.” to alert an upcoming shift change
 */
 cron.schedule('0 17 * * 6', () => {
     console.log("alert for shift change has been sent out");
     responded = true;
-    let message = `<@personEmail:${rotation[1]}>, your on-call duty starts on Monday. Should you choose to accept this mission, you will be rewarded with 1 day of comp time!!`;
+    let message = `<@personEmail:${rotation[1]}>, your on-call duty starts on Monday.`;
 
     const data = JSON.stringify({
         "roomId": "e7efc2d0-97b7-11e9-8295-7bf0166225e8",
@@ -218,32 +219,32 @@ framework.hears('skip', function (bot) {
    It's a good practice to gracefully handle unexpected input
 */
 framework.hears(/.*/, function (bot, trigger) {
-  // This will fire for any input so only respond if we haven't already
-  if (!responded) {
-    console.log(`catch-all handler fired for user input: ${trigger.text}`);
-    bot.say(`Sorry, I don't know how to respond to "${trigger.text}". Use help for a list of available commands`)
-      .catch((e) => console.error(`Problem in the unexpected command handler: ${e.message}`));
-  }
-  responded = false;
+    // This will fire for any input so only respond if we haven't already
+    if (!responded) {
+        console.log(`catch-all handler fired for user input: ${trigger.text}`);
+        bot.say(`Sorry, I don't know how to respond to "${trigger.text}". Use help for a list of available commands`)
+        .catch((e) => console.error(`Problem in the unexpected command handler: ${e.message}`));
+    }
+    responded = false;
 });
 
 // Server config & housekeeping
 // Health Check
 app.get('/', function (req, res) {
-  res.send(`I'm alive. ${Date.now()}`);
+  res.send(`I'm alive. ${moment().format('YYYY-MM-DD hh:mm:ss')}`);
 });
 
 app.post('/', webhook(framework));
 
-var server = app.listen(config.port, function () {
-  framework.debug('framework listening on port %s', config.port);
+let server = app.listen(config.port, function () {
+    framework.debug('framework listening on port %s', config.port);
 });
 
 // gracefully shutdown (ctrl-c)
 process.on('SIGINT', function () {
-  framework.debug('stopping...');
-  server.close();
-  framework.stop().then(function () {
-    process.exit();
-  });
+    framework.debug('stopping...');
+    server.close();
+    framework.stop().then(function () {
+        process.exit();
+    });
 });
