@@ -4,10 +4,10 @@ let framework = require('webex-node-bot-framework');
 const webhook = require('webex-node-bot-framework/webhook');
 const express = require('express');
 const bodyParser = require('body-parser');
-const https = require('https');
 const cron = require('node-cron');
 const app = express();
 const moment = require('moment');
+const axios = require('axios')
 app.use(bodyParser.json());
 app.use(express.static('images'));
 const config = require("./config.json");
@@ -48,16 +48,16 @@ framework.on('spawn', (bot, id, actorId) => {
     }
 });
 
-// Process incoming messages
 let responded = false;
 let rotation = [
-                    'kyle.stephens1@metlife.com|Kyle Stephens',
-                    'aj.langlois@metlife.com|AJ Langlois',
-                    'kyle.dodd@metlife.com|Kyle Dodd',
-                    'vvobbilichetty@metlife.com|Vinay Vobbilichetty',
-                    'cedric.smith@metlife.com|Cedric Smith'
+                    'aj.langlois@metlife.com',
+                    'kyle.dodd@metlife.com',
+                    'vvobbilichetty@metlife.com',
+                    'cedric.smith@metlife.com',
+                    'kyle.stephens1@metlife.com'
                ];
 
+// Process incoming messages
 /* On mention with command
 ex User enters @botname help, the bot will write back in markdown
 */
@@ -121,43 +121,36 @@ framework.hears('alert', function (bot) {
       .catch((e) => console.error(`Problem in alert handler: ${e.message}`));
 });
 
-/* runs “At 12:00 on Saturday.” to alert an upcoming shift change
+/* runs “At 2:00 pm on Friday.” to alert an upcoming shift change
 */
-cron.schedule('0 17 * * 6', () => {
+cron.schedule('0 14 * * 5', () => {
     console.log("alert for shift change has been sent out");
-    responded = true;
     let message = `<@personEmail:${rotation[1]}>, your on-call duty starts on Monday.`;
+    const IR_Tier3_room_id = 'e7efc2d0-97b7-11e9-8295-7bf0166225e8';
 
     const data = JSON.stringify({
-        "roomId": "e7efc2d0-97b7-11e9-8295-7bf0166225e8",
+        "roomId": IR_Tier3_room_id,
         "markdown": message
-    })
+    });
 
-    const options = {
-        hostname: 'webexapis.com',
-        path: '/v1/messages',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length,
-            'Authorization': 'Bearer NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c'
-        }
-    }
+    const bot_access_token = 'NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c';
 
-    const req = https.request(options, res => {
-        console.log(`statusCode: ${res.statusCode}`)
-
-        res.on('data', d => {
-            process.stdout.write(d)
+    axios
+        .post('https://webexapis.com/v1/messages',
+            JSON.stringify({
+                "roomId": IR_Tier3_room_id,
+                "markdown": message
+            }),
+                {
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': data.length,
+                'Authorization': `Bearer ${bot_access_token}`
+            }
         })
-    })
-
-    req.on('error', error => {
-        console.error(error)
-    })
-
-    req.write(data)
-    req.end()
+        .catch(error => {
+            console.error(error);
+        });
 }, {
     scheduled: true,
     recoverMissedExecutions: false
@@ -231,7 +224,7 @@ framework.hears(/.*/, function (bot, trigger) {
 // Server config & housekeeping
 // Health Check
 app.get('/', function (req, res) {
-  res.send(`I'm alive. ${moment().format('YYYY-MM-DD hh:mm:ss')}`);
+  res.send(`I'm alive. ${moment().format('YYYY-MM-DD hh:mm:ss A')}`);
 });
 
 app.post('/', webhook(framework));
