@@ -27,7 +27,6 @@ framework.on("initialized", function () {
 framework.on('spawn', (bot, id, actorId) => {
     if (actorId) {
         // When actorId is present it means someone added your bot got added to a new space
-        // Let's find out more about them..
         let msg = 'You can say `help` to get the list of words I am able to respond to.';
         bot.webex.people.get(actorId).then(() => {
             msg = `Hello there. ${msg}`;
@@ -56,6 +55,8 @@ let rotation = [
                     'cedric.smith@metlife.com',
                     'kyle.stephens1@metlife.com'
                ];
+const IR_Tier3_room_id = 'e7efc2d0-97b7-11e9-8295-7bf0166225e8';
+const bot_access_token = 'NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c';
 
 // Process incoming messages
 /* On mention with command
@@ -125,15 +126,12 @@ framework.hears('alert', function (bot) {
 */
 cron.schedule('0 14 * * 5', () => {
     console.log("alert for shift change has been sent out");
-    let message = `<@personEmail:${rotation[1]}>, your on-call duty starts on Monday.`;
-    const IR_Tier3_room_id = 'e7efc2d0-97b7-11e9-8295-7bf0166225e8';
 
+    let message = `<@personEmail:${rotation[1]}>, your on-call duty starts on Monday.`;
     const data = JSON.stringify({
         "roomId": IR_Tier3_room_id,
         "markdown": message
     });
-
-    const bot_access_token = 'NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1MzU5OWMtZmZm_PF84_17e2335e-9ae4-439c-8209-df2210c7de3c';
 
     axios
         .post('https://webexapis.com/v1/messages',
@@ -141,13 +139,46 @@ cron.schedule('0 14 * * 5', () => {
                 "roomId": IR_Tier3_room_id,
                 "markdown": message
             }),
-                {
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': data.length,
-                'Authorization': `Bearer ${bot_access_token}`
-            }
-        })
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': data.length,
+                    'Authorization': `Bearer ${bot_access_token}`
+                }
+            })
+        .catch(error => {
+            console.error(error);
+        });
+}, {
+    scheduled: true,
+    recoverMissedExecutions: false
+});
+
+/* runs “At 9:00 AM on Monday.” to announce a shift change
+*/
+cron.schedule('0 9 * * 1', () => {
+    console.log("making shift change and announcing it");
+
+    rotation.push(rotation.shift());
+    let message = `<@personEmail:${rotation[0]}>, you are now on-call for this week.`;
+    const data = JSON.stringify({
+        "roomId": IR_Tier3_room_id,
+        "markdown": message
+    });
+
+    axios
+        .post('https://webexapis.com/v1/messages',
+            JSON.stringify({
+                "roomId": IR_Tier3_room_id,
+                "markdown": message
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': data.length,
+                    'Authorization': `Bearer ${bot_access_token}`
+                }
+            })
         .catch(error => {
             console.error(error);
         });
