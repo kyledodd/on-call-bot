@@ -72,8 +72,8 @@ framework.hears('help', function (bot) {
       '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3) \n' +
       '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
       '***skip***  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
-      '***add user.email@metlife.com|First Name***  (adds user to end of rotation. Please use user.email@metlife.com|First Last for their name to keep the mentions from breaking. \n)' +
-      '***remove @user***  (removes user from rotation. \n)' +
+      '***add user.email@metlife.com|First Name***  (adds user to end of rotation. Please use user.email@metlife.com|First Last for their name to keep the mentions from breaking.) \n' +
+      '***remove @user***  (removes user from rotation.) \n' +
       '**dev** (get the developer details) \n' +
       '***about*** (get details about the bot) \n' +
       '**help** (what you are reading now)')
