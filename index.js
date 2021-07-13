@@ -277,7 +277,7 @@ framework.hears('remove', function (bot, trigger) {
             bot.say("markdown", "Either that name isn't in here or there's something wrong with the assign function. Please contact my dev.");
         }
     }
-};
+});
 
 /* On mention with command 'about'
 ex use @botname about to get some facts and what-not about this bot.
