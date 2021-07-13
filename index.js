@@ -63,20 +63,6 @@ const bot_access_token = 'NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1Mz
 ex User enters @botname help, the bot will write back in markdown
 */
 framework.hears('help', function (bot) {
-<<<<<<< HEAD
-    console.log(`someone needs help!`);
-    responded = true;
-    bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
-        '**who**  (get the name of the current METCIRT on-call person) \n' +
-        '**rotation**  (get the rotation details) \n' +
-        '**responsibilities**  (get the on-call responsibilities) \n' +
-        '**assign @USER**  (swap the current on-call with the tagged @USER if they are in T3) \n' +
-        '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
-        '**skip**  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
-        '**dev** (get the developer details) \n' +
-        '**help** (what you are reading now)')
-        .catch((e) => console.error(`Problem in help handler: ${e.message}`));
-=======
   console.log(`someone needs help!`);
   responded = true;
   bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
@@ -89,9 +75,9 @@ framework.hears('help', function (bot) {
       '***add user.email@metlife.com|First Name***  (adds user to end of rotation. Please use user.email@metlife.com|First Last for their name to keep the mentions from breaking. \n)' +
       '***remove @user***  (removes user from rotation. \n)' +
       '**dev** (get the developer details) \n' +
+      '***about*** (get details about the bot) \n' +
       '**help** (what you are reading now)')
     .catch((e) => console.error(`Problem in help handler: ${e.message}`));
->>>>>>> add_remove
 });
 
 /* On mention with command
@@ -264,8 +250,7 @@ framework.hears('add', function (bot, trigger) {
     responded = true;
     let trigger_text = `${trigger.text}`;
     let name_array = trigger_text.split(" ");
-    name_array.shift();
-    name_array.shift();
+    name_array.splice(0, 2);
     name = name_array.join(" ");
     rotation.push(name);
     bot.say("markdown", `<@personEmail:${name}> has been added to the on-call rotation.`);
@@ -297,6 +282,7 @@ framework.hears('remove', function (bot, trigger) {
 /* On mention with command 'about'
 ex use @botname about to get some facts and what-not about this bot.
  */
+//TODO
 
 /* On mention with unexpected bot command
    It's a good practice to gracefully handle unexpected input
