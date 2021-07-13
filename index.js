@@ -63,6 +63,7 @@ const bot_access_token = 'NWU5ZDZkNWYtMjQ2My00MDdiLThiOTMtNjBhNjE4NWFiZjUwYjE1Mz
 ex User enters @botname help, the bot will write back in markdown
 */
 framework.hears('help', function (bot) {
+<<<<<<< HEAD
     console.log(`someone needs help!`);
     responded = true;
     bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
@@ -75,6 +76,22 @@ framework.hears('help', function (bot) {
         '**dev** (get the developer details) \n' +
         '**help** (what you are reading now)')
         .catch((e) => console.error(`Problem in help handler: ${e.message}`));
+=======
+  console.log(`someone needs help!`);
+  responded = true;
+  bot.say("markdown", 'These are the commands I can respond to:', '\n\n ' +
+      '**who**  (get the name of the current METCIRT on-call person) \n' +
+      '**rotation**  (get the rotation details) \n' +
+      '**responsibilities**  (get the on-call responsibilities) \n' +
+      '***assign @USER***  (swap the current on-call with the tagged @USER if they are in T3) \n' +
+      '**alert**  (alerts the person next in the rotation of their upcoming on-call duty) \n' +
+      '***skip***  (skips the current on-call. Take care using this, the next person may not appreciate unexpected schedule changes.) \n' +
+      '***add user.email@metlife.com|First Name***  (adds user to end of rotation. Please use user.email@metlife.com|First Last for their name to keep the mentions from breaking. \n)' +
+      '***remove @user***  (removes user from rotation. \n)' +
+      '**dev** (get the developer details) \n' +
+      '**help** (what you are reading now)')
+    .catch((e) => console.error(`Problem in help handler: ${e.message}`));
+>>>>>>> add_remove
 });
 
 /* On mention with command
@@ -238,6 +255,48 @@ framework.hears('skip', function (bot) {
     bot.say("markdown", `Skipped the current on-call. The new on-call is <@personEmail:${rotation[0]}>.`)
         .catch((e) => console.error(`Problem in skip handler: ${e.message}`));
 })
+
+/* On mention with command, 'add user.email@metlife.com|First Last'
+ex use '@botname add kyle.dodd@metlife.com|Kyle Dodd' adds Kyle Dodd to the end of the rotation
+ */
+framework.hears('add', function (bot, trigger) {
+    console.log("add command received");
+    responded = true;
+    let trigger_text = `${trigger.text}`;
+    let name_array = trigger_text.split(" ");
+    name_array.shift();
+    name_array.shift();
+    name = name_array.join(" ");
+    rotation.push(name);
+    bot.say("markdown", `<@personEmail:${name}> has been added to the on-call rotation.`);
+});
+
+/* On mention with command, 'remove @user'
+ex use '@botname remove @User to remove @User from rotation'
+ */
+framework.hears('remove', function (bot, trigger) {
+    console.log("remove command received");
+    responded = true;
+    let trigger_text = `${trigger.text}`;
+    let name_array = trigger_text.split(" ");
+    let name = name_array[2];
+    name = name.replace(/\W/g, '');
+    let rotation_length = rotation.length;
+    for (let i = 0 ; i < rotation_length; i++) {
+        let val = rotation[i];
+        if (val.includes(name)) {
+            rotation.splice(i, 1);
+            bot.say("markdown", `The user:  <@personEmail:${rotation[0]}> has been removed from the on-call rotation.`);
+            break;
+        } else if (i == rotation_length - 1) {
+            bot.say("markdown", "Either that name isn't in here or there's something wrong with the assign function. Please contact my dev.");
+        }
+    }
+};
+
+/* On mention with command 'about'
+ex use @botname about to get some facts and what-not about this bot.
+ */
 
 /* On mention with unexpected bot command
    It's a good practice to gracefully handle unexpected input
